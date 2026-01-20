@@ -28,34 +28,32 @@ export function LoadingScreen() {
                 <motion.div
                     className="fixed inset-0 z-[9999] flex items-center justify-center bg-black text-white overflow-hidden"
                     initial={{ opacity: 1 }}
-                    exit={{ opacity: 0, transition: { duration: 1, ease: "easeInOut" } }}
+                    exit={{ opacity: 0, transition: { duration: 0.8, ease: "easeInOut" } }}
                 >
-                    {/* Cinematic Background Noise */}
-                    <div className="absolute inset-0 opacity-[0.15] pointer-events-none bg-[url('/noise.png')] animate-pulse" />
+                    {/* Cinematic Background Cycle */}
+                    <motion.div
+                        className="absolute inset-0 bg-gradient-to-br from-black via-neutral-900 to-black bg-[length:400%_400%]"
+                        animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+                        transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                    />
+                    <div className="absolute inset-0 opacity-[0.1] bg-[url('/noise.png')]" />
 
                     {/* Text Animation */}
                     <motion.div
-                        initial={{ scale: 0.8, opacity: 0, filter: "blur(10px)" }}
+                        initial={{ scale: 0.9, opacity: 0, filter: "blur(10px)" }}
                         animate={{
                             scale: 1,
                             opacity: 1,
                             filter: "blur(0px)",
                             transition: { duration: 1.5, ease: "easeOut" }
                         }}
-                        exit={{ scale: 1.1, opacity: 0, filter: "blur(10px)", transition: { duration: 0.5 } }}
+                        exit={{ scale: 1.1, opacity: 0, filter: "blur(20px)", transition: { duration: 0.5 } }}
                         className="relative z-10 flex flex-col items-center"
                     >
-                        <h1 className="text-4xl md:text-7xl font-black tracking-[0.5em] text-white/90 drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
-                            INITIALIZING
+                        <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                            USELESS
                         </h1>
-                        <motion.div
-                            className="mt-4 h-[1px] bg-white/50"
-                            initial={{ width: 0 }}
-                            animate={{ width: "200px" }}
-                            transition={{ delay: 0.5, duration: 1.5, ease: "easeInOut" }}
-                        />
                     </motion.div>
-
                 </motion.div>
             )}
         </AnimatePresence>

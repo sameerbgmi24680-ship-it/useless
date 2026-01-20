@@ -28,11 +28,17 @@ export function Gallery() {
             <div className="sticky top-0 h-screen flex items-center overflow-hidden">
 
                 {/* Title Overlay (Fixed) */}
-                <div className="absolute top-10 left-10 z-20">
+                <motion.div
+                    initial={{ opacity: 0, x: -50, scale: 0.9 }}
+                    whileInView={{ opacity: 1, x: 0, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="absolute top-10 left-10 z-20"
+                >
                     <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-white drop-shadow-lg">
                         MOMENTS <span className="text-[var(--royal-gold)]">UNLOCKED</span>
                     </h2>
-                </div>
+                </motion.div>
 
                 <motion.div style={{ x }} className="flex gap-4 pl-10">
                     {moments.map((item) => (

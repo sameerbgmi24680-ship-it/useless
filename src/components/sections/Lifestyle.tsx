@@ -35,10 +35,15 @@ export function Lifestyle() {
 
             <div className="container mx-auto px-6 relative z-10">
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-                    <div>
+                    <motion.div
+                        initial={{ opacity: 0, x: -50, scale: 0.9 }}
+                        whileInView={{ opacity: 1, x: 0, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                    >
                         <h2 className="text-4xl font-bold tracking-tight mb-2">LIFESTYLE</h2>
                         <p className="text-white/60">Thoughts, stories, and the way we live.</p>
-                    </div>
+                    </motion.div>
                     <Button variant="link" className="text-white hover:text-yellow-500 transition-colors p-0 h-auto">
                         Read the Journal
                     </Button>
@@ -48,10 +53,10 @@ export function Lifestyle() {
                     {articles.map((article, index) => (
                         <motion.article
                             key={article.id}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
+                            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                            viewport={{ once: true, margin: "-50px" }}
+                            transition={{ duration: 0.6, delay: index * 0.1, ease: "easeOut" }}
                             className="group cursor-pointer"
                         >
                             <div className="aspect-[16/10] bg-neutral-900 rounded-lg mb-6 overflow-hidden relative">

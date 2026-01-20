@@ -30,32 +30,44 @@ export function Hero() {
             <motion.div
                 className="relative z-10 flex flex-col items-center"
                 style={{
-                    rotateX: useTransform(mouseY, [-500, 500], [10, -10]),
-                    rotateY: useTransform(mouseX, [-500, 500], [-10, 10]),
+                    rotateX: useTransform(mouseY, [-500, 500], [15, -15]), // Enhanced depth
+                    rotateY: useTransform(mouseX, [-500, 500], [-15, 15]),
                     transformStyle: "preserve-3d",
                 }}
             >
-                {/* Base Text (Dark/Muted) - Depth Layer */}
-                <h1 className="text-[15vw] font-black leading-none tracking-tighter text-neutral-900 select-none absolute top-1 left-1 opacity-50 blur-sm transform translate-z-[-20px]">
+                {/* Base Shadow Layer (Depth) */}
+                <h1 className="text-[15vw] font-black leading-none tracking-tighter text-neutral-900 select-none absolute top-4 left-4 opacity-50 blur-md transform translate-z-[-50px]">
                     USELESS
                 </h1>
 
-                {/* Main Text with Photos Inside */}
-                <motion.h1
-                    className="relative text-[15vw] font-black leading-none tracking-tighter text-transparent bg-clip-text select-none z-20"
-                    style={{
-                        backgroundImage: "url('/images/usless-group.jpg')", // Ensure this path is correct
-                        backgroundSize: "cover",
-                        backgroundPosition: useTransform(useScroll().scrollY, [0, 1000], ["0% 0%", "0% 100%"]),
-                        WebkitBackgroundClip: "text",
-                    }}
-                >
-                    USELESS
-                    {/* Overlay Gradient for Readability */}
-                    <div className="absolute inset-0 bg-black/40 mix-blend-multiply pointer-events-none" />
-                </motion.h1>
+                {/* Container for Morphing Text */}
+                <div className="relative z-20">
+                    {/* Layer 1: Gradient Text (Fades OUT on scroll) */}
+                    <motion.h1
+                        className="text-[15vw] font-black leading-none tracking-tighter bg-gradient-to-br from-[var(--royal-gold)] via-[var(--neon-purple)] to-cyan-500 bg-clip-text text-transparent select-none absolute inset-0"
+                        style={{
+                            opacity: useTransform(useScroll().scrollY, [0, 300], [1, 0]),
+                        }}
+                    >
+                        USELESS
+                    </motion.h1>
 
-                <p className="mt-4 font-mono text-sm uppercase tracking-[0.5em] text-neutral-500 transform translate-z-[10px]">
+                    {/* Layer 2: Photo Text (Fades IN on scroll) */}
+                    <motion.h1
+                        className="relative text-[15vw] font-black leading-none tracking-tighter text-transparent bg-clip-text select-none"
+                        style={{
+                            backgroundImage: "url('/images/usless-group.jpg')", // Ensure this path is correct
+                            backgroundSize: "cover",
+                            backgroundPosition: useTransform(useScroll().scrollY, [0, 800], ["50% 0%", "50% 100%"]), // Vertical Internal Motion
+                            WebkitBackgroundClip: "text",
+                            opacity: useTransform(useScroll().scrollY, [0, 300], [0, 1]), // Cross-fade
+                        }}
+                    >
+                        USELESS
+                    </motion.h1>
+                </div>
+
+                <p className="mt-8 font-mono text-sm uppercase tracking-[0.5em] text-neutral-400 transform translate-z-[20px] drop-shadow-lg">
                     Est. 2024 • The Collective
                 </p>
             </motion.div>
