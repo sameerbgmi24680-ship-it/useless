@@ -59,6 +59,16 @@ export function Contact() {
                         </div>
 
                         <div className="space-y-2">
+                            <label className="text-sm font-medium">Purpose</label>
+                            <select className="flex h-10 w-full rounded-md border border-white/10 bg-black/50 px-3 py-2 text-sm text-white ring-offset-background placeholder:text-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                                <option>Collaboration</option>
+                                <option>Join the Collective</option>
+                                <option>Events / Media</option>
+                                <option>Just saying hi</option>
+                            </select>
+                        </div>
+
+                        <div className="space-y-2">
                             <label className="text-sm font-medium">Message</label>
                             <Textarea className="bg-black/50 border-white/10 text-white placeholder:text-white/20 min-h-[120px]" placeholder="Tell us about your idea..." />
                         </div>

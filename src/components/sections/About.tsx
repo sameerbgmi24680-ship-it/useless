@@ -6,16 +6,16 @@ import { SideReveal } from "@/components/ui/SideReveal";
 
 const features = [
     {
-        title: "Origins",
-        description: "Started in the labs of CSE Dept, forged in late night debug sessions.",
+        title: "The Brains",
+        description: "Architecting scalable systems and resilient codebases that power our vision.",
     },
     {
-        title: "Vibe",
-        description: "Unfiltered, ambitious, and slightly chaotic.",
+        title: "The Vision",
+        description: "Crafting immersive user experiences and defining the visual language.",
     },
     {
-        title: "Mission",
-        description: "To build cool things and laugh while doing it.",
+        title: "The Heart",
+        description: "Building community, managing events, and keeping the collective spirit alive.",
     },
 ];
 

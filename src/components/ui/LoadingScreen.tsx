@@ -50,9 +50,15 @@ export function LoadingScreen() {
                         exit={{ scale: 1.1, opacity: 0, filter: "blur(20px)", transition: { duration: 0.5 } }}
                         className="relative z-10 flex flex-col items-center"
                     >
-                        <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                        <h1 className="text-6xl md:text-9xl font-black tracking-tighter text-white drop-shadow-2xl mix-blend-overlay">
                             USELESS
                         </h1>
+                        <motion.div
+                            initial={{ width: 0, opacity: 0 }}
+                            animate={{ width: "100%", opacity: 1 }}
+                            transition={{ delay: 0.5, duration: 1 }}
+                            className="h-[2px] bg-white/80 mt-4 rounded-full"
+                        />
                     </motion.div>
                 </motion.div>
             )}

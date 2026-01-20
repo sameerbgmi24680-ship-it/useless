@@ -5,14 +5,10 @@ import { useRef } from "react";
 import { ZoomIn } from "lucide-react";
 
 const moments = [
-    { id: 1, src: "/images/usless-group.jpg", title: "Midnight Drive" },
-    { id: 2, src: "/images/usless-group.jpg", title: "Studio Sessions" },
-    { id: 3, src: "/images/usless-group.jpg", title: "The Summit" },
-    { id: 4, src: "/images/usless-group.jpg", title: "Backstage Pass" },
-    { id: 5, src: "/images/usless-group.jpg", title: "Urban Exploration" },
-    { id: 6, src: "/images/usless-group.jpg", title: "Golden Hour" },
-    { id: 7, src: "/images/usless-group.jpg", title: "Neon Nights" },
-    { id: 8, src: "/images/usless-group.jpg", title: "Rooftop Vibes" },
+    { id: 1, src: "/images/usless-group.jpg", title: "Midnight Drive", caption: "Chasing horizons." },
+    { id: 2, src: "/images/usless-group.jpg", title: "Studio Sessions", caption: "Where magic happens." },
+    { id: 3, src: "/images/usless-group.jpg", title: "The Summit", caption: "Reaching new heights." },
+    { id: 4, src: "/images/usless-group.jpg", title: "Backstage Pass", caption: "Behind the scenes." },
 ];
 
 export function Gallery() {

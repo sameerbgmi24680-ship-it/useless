@@ -67,9 +67,14 @@ export function Hero() {
                     </motion.h1>
                 </div>
 
-                <p className="mt-8 font-mono text-sm uppercase tracking-[0.5em] text-neutral-400 transform translate-z-[20px] drop-shadow-lg">
-                    Est. 2024 • The Collective
-                </p>
+                <div className="mt-8 flex flex-col items-center gap-4 text-center transform translate-z-[20px]">
+                    <p className="font-mono text-xs md:text-sm uppercase tracking-[0.5em] text-neutral-400 drop-shadow-lg">
+                        Est. 2025 • The Collective
+                    </p>
+                    <p className="text-white/60 text-sm md:text-base font-light tracking-wide max-w-md mx-auto">
+                        A creative tech collective blending design, code, and culture.
+                    </p>
+                </div>
             </motion.div>
 
             {/* Revealed Text (Neon/Gold) - Spotlight Effect */}

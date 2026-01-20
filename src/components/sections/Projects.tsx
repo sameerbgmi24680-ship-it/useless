@@ -9,19 +9,19 @@ const projects = [
         year: "2024",
         title: "The Collective App",
         category: "Software",
-        description: "A digital space for our community to connect and share.",
+        description: "Goal: Connect our community. Contribution: Full Stack Dev. Outcome: 500+ Active Users.",
     },
     {
         year: "2023",
         title: "Midnight Run II",
         category: "Event",
-        description: "Organized a cross-state rally with over 500 attendees.",
+        description: "Goal: Organize a state rally. Contribution: Logistics & Media. Outcome: 500 Attendees.",
     },
     {
         year: "2023",
         title: "Project Alpha",
         category: "Brand",
-        description: "Launched our own merchandise line, selling out in 48 hours.",
+        description: "Goal: Launch merch line. Contribution: Design & Marketing. Outcome: Sold out in 48h.",
     },
 ];
 
