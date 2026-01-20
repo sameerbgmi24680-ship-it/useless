@@ -4,9 +4,19 @@ import { motion, useMotionTemplate, useMotionValue, useScroll, useTransform } fr
 import { MouseEvent } from "react";
 import { cn } from "@/lib/utils";
 
-export function Hero() {
+interface HeroProps {
+    scrollProgress: any; // Using 'any' briefly to avoid complexity with MotionValue types, but ideally MotionValue<number>
+}
+
+export function Hero({ scrollProgress }: HeroProps) {
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
+
+    // Cinematic Scroll Transforms (0 - 0.15 range of total page scroll)
+    const opacity = useTransform(scrollProgress, [0, 0.1, 0.2], [1, 1, 0]);
+    const scale = useTransform(scrollProgress, [0, 0.2], [1, 0.8]);
+    const y = useTransform(scrollProgress, [0, 0.2], ["0%", "-50%"]); // Moves UP as you scroll DOWN (Illusion)
+    const blur = useTransform(scrollProgress, [0, 0.15], ["0px", "10px"]);
 
     function handleMouseMove({ currentTarget, clientX, clientY }: MouseEvent) {
         const { left, top } = currentTarget.getBoundingClientRect();
@@ -15,9 +25,10 @@ export function Hero() {
     }
 
     return (
-        <div
-            className="group relative flex h-screen w-full items-center justify-center bg-black overflow-hidden"
+        <motion.div
+            className="group relative flex h-full w-full items-center justify-center bg-black overflow-hidden perspective-1000"
             onMouseMove={handleMouseMove}
+            style={{ opacity, scale, y, filter: useMotionTemplate`blur(${blur})` }}
         >
             {/* Background - Subtle Grid & Ambient Pulse */}
             <motion.div
@@ -45,22 +56,18 @@ export function Hero() {
                     {/* Layer 1: Gradient Text (Fades OUT on scroll) */}
                     <motion.h1
                         className="text-[15vw] font-black leading-none tracking-tighter bg-gradient-to-br from-[var(--royal-gold)] via-[var(--neon-purple)] to-cyan-500 bg-clip-text text-transparent select-none absolute inset-0"
-                        style={{
-                            opacity: useTransform(useScroll().scrollY, [0, 300], [1, 0]),
-                        }}
                     >
                         USELESS
                     </motion.h1>
 
-                    {/* Layer 2: Photo Text (Fades IN on scroll) */}
+                    {/* Layer 2: Photo Text (Always visible here, fading handled by parent scroll prop if needed, or kept as static texture) */}
                     <motion.h1
                         className="relative text-[15vw] font-black leading-none tracking-tighter text-transparent bg-clip-text select-none"
                         style={{
                             backgroundImage: "url('/images/usless-group.jpg')", // Ensure this path is correct
                             backgroundSize: "cover",
-                            backgroundPosition: useTransform(useScroll().scrollY, [0, 800], ["50% 0%", "50% 100%"]), // Vertical Internal Motion
                             WebkitBackgroundClip: "text",
-                            opacity: useTransform(useScroll().scrollY, [0, 300], [0, 1]), // Cross-fade
+                            opacity: 0.5, // Blend it slightly
                         }}
                     >
                         USELESS
@@ -77,27 +84,6 @@ export function Hero() {
                 </div>
             </motion.div>
 
-            {/* Revealed Text (Neon/Gold) - Spotlight Effect */}
-            <motion.div
-                className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-none mix-blend-overlay"
-                style={{
-                    maskImage: useMotionTemplate`radial-gradient(
-            300px circle at ${mouseX}px ${mouseY}px,
-            black 0%,
-            transparent 100%
-          )`,
-                    WebkitMaskImage: useMotionTemplate`radial-gradient(
-            300px circle at ${mouseX}px ${mouseY}px,
-            black 0%,
-            transparent 100%
-          )`,
-                }}
-            >
-                <h1 className="text-[15vw] font-black leading-none tracking-tighter text-white select-none drop-shadow-[0_0_30px_rgba(255,255,255,0.8)]">
-                    USELESS
-                </h1>
-            </motion.div>
-
             {/* Scroll Indicator */}
             <motion.div
                 initial={{ opacity: 0 }}
@@ -108,6 +94,6 @@ export function Hero() {
                 <span className="text-[10px] uppercase tracking-widest">Scroll to Reveal</span>
                 <div className="w-[1px] h-12 bg-gradient-to-b from-transparent via-[var(--royal-gold)] to-transparent" />
             </motion.div>
-        </div>
+        </motion.div>
     );
 }
