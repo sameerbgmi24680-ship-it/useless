@@ -20,8 +20,8 @@ export function SideReveal({
 
     return (
         <motion.div
-            initial={{ opacity: 0, x: xOffset }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: xOffset, scale: 0.9 }}
+            whileInView={{ opacity: 1, x: 0, scale: 1 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{
                 duration: 0.8,

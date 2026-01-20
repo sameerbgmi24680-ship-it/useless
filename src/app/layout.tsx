@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function RootLayout({
           "min-h-screen bg-background text-foreground antialiased"
         )}
       >
+        <LoadingScreen />
         <ScrollProgress />
         {children}
       </body>

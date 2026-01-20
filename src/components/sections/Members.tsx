@@ -57,10 +57,10 @@ export function Members() {
                     {members.map((member, index) => (
                         <motion.div
                             key={member.name}
-                            initial={{ opacity: 0, y: 50, rotateX: -15 }}
-                            whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1, type: "spring", stiffness: 50 }}
+                            initial={{ opacity: 0, x: -50, y: 50, scale: 0.8 }}
+                            whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+                            viewport={{ once: true, margin: "-50px" }}
+                            transition={{ duration: 0.8, delay: index * 0.1, ease: [0.25, 0.4, 0.25, 1] }}
                             className="group relative h-[400px] w-full bg-black rounded-xl overflow-hidden cursor-pointer perspective-1000"
                         >
                             {/* Image Placeholder */}

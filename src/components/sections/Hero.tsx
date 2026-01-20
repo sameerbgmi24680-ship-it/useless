@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
+import { motion, useMotionTemplate, useMotionValue, useScroll, useTransform } from "framer-motion";
 import { MouseEvent } from "react";
 import { cn } from "@/lib/utils";
 
@@ -26,19 +26,43 @@ export function Hero() {
                 transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             />
 
-            {/* Base Text (Dark/Muted) */}
-            <div className="relative z-0 flex flex-col items-center">
-                <h1 className="text-[15vw] font-black leading-none tracking-tighter text-neutral-800 select-none">
+            {/* 3D Container with Tilt */}
+            <motion.div
+                className="relative z-10 flex flex-col items-center"
+                style={{
+                    rotateX: useTransform(mouseY, [-500, 500], [10, -10]),
+                    rotateY: useTransform(mouseX, [-500, 500], [-10, 10]),
+                    transformStyle: "preserve-3d",
+                }}
+            >
+                {/* Base Text (Dark/Muted) - Depth Layer */}
+                <h1 className="text-[15vw] font-black leading-none tracking-tighter text-neutral-900 select-none absolute top-1 left-1 opacity-50 blur-sm transform translate-z-[-20px]">
                     USELESS
                 </h1>
-                <p className="mt-4 font-mono text-sm uppercase tracking-[0.5em] text-neutral-700">
+
+                {/* Main Text with Photos Inside */}
+                <motion.h1
+                    className="relative text-[15vw] font-black leading-none tracking-tighter text-transparent bg-clip-text select-none z-20"
+                    style={{
+                        backgroundImage: "url('/images/usless-group.jpg')", // Ensure this path is correct
+                        backgroundSize: "cover",
+                        backgroundPosition: useTransform(useScroll().scrollY, [0, 1000], ["0% 0%", "0% 100%"]),
+                        WebkitBackgroundClip: "text",
+                    }}
+                >
+                    USELESS
+                    {/* Overlay Gradient for Readability */}
+                    <div className="absolute inset-0 bg-black/40 mix-blend-multiply pointer-events-none" />
+                </motion.h1>
+
+                <p className="mt-4 font-mono text-sm uppercase tracking-[0.5em] text-neutral-500 transform translate-z-[10px]">
                     Est. 2024 • The Collective
                 </p>
-            </div>
+            </motion.div>
 
-            {/* Revealed Text (Neon/Gold) */}
+            {/* Revealed Text (Neon/Gold) - Spotlight Effect */}
             <motion.div
-                className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none"
+                className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-none mix-blend-overlay"
                 style={{
                     maskImage: useMotionTemplate`radial-gradient(
             300px circle at ${mouseX}px ${mouseY}px,
@@ -52,12 +76,9 @@ export function Hero() {
           )`,
                 }}
             >
-                <h1 className="text-[15vw] font-black leading-none tracking-tighter bg-gradient-to-br from-[var(--royal-gold)] via-[var(--neon-purple)] to-cyan-500 bg-clip-text text-transparent select-none drop-shadow-[0_0_30px_rgba(176,38,255,0.5)]">
+                <h1 className="text-[15vw] font-black leading-none tracking-tighter text-white select-none drop-shadow-[0_0_30px_rgba(255,255,255,0.8)]">
                     USELESS
                 </h1>
-                <p className="mt-4 font-mono text-sm uppercase tracking-[0.5em] text-[var(--royal-gold)] drop-shadow-md">
-                    Est. 2024 • The Collective
-                </p>
             </motion.div>
 
             {/* Scroll Indicator */}
