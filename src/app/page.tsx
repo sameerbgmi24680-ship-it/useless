@@ -21,15 +21,15 @@ export default function Home() {
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 20, restDelta: 0.001 });
 
   return (
-    <main ref={containerRef} className="relative bg-black min-h-[800vh]"> {/* Massive height for scrubbing */}
+    <main ref={containerRef} className="relative bg-black min-h-[1500vh]"> {/* Massive height for scrubbing */}
 
-      {/* SCENE 1: HERO (0% - 15%) */}
+      {/* SCENE 1: HERO (0% - 10%) */}
       {/* Pins the Hero and handles its exit animation */}
       <div className="sticky top-0 h-screen overflow-hidden">
         <Hero scrollProgress={smoothProgress} />
       </div>
 
-      {/* SCENE 2: MEMBERS (15% - 45%+) */}
+      {/* SCENE 2: MEMBERS & FINALE (10% - 100%) */}
       {/* Overlaps/Pins for member sequence. 
                 Pointer events 'none' by default so scroll passes through, 
                 but children can re-enable events if needed (like the detail modal). 

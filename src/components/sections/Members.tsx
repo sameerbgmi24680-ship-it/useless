@@ -29,19 +29,22 @@ const members = [
 export function Members({ scrollProgress }: MembersProps) {
     const [selectedMember, setSelectedMember] = useState<typeof members[0] | null>(null);
 
-    // Scroll Range for the Members Sequence (e.g., 15% to 85% of page scroll)
-    const START_SCROLL = 0.15;
-    const END_SCROLL = 0.85;
-    const TOTAL_DURATION = END_SCROLL - START_SCROLL;
-    const STEP = TOTAL_DURATION / members.length;
+    // Scroll Timeline Configuration
+    const START_SCROLL = 0.10; // Members start appearing
+    const SQUAD_END_SCROLL = 0.85; // Last member finishes
+    const FINAL_PAN_START = 0.85; // "USELESS" text starts
+    const FINAL_PAN_END = 0.98; // "USELESS" text settles
+
+    const TOTAL_SQUAD_DURATION = SQUAD_END_SCROLL - START_SCROLL;
+    const STEP = TOTAL_SQUAD_DURATION / members.length;
 
     return (
-        <section id="members" className="relative h-full w-full flex items-center justify-center pointer-events-none">
+        <section id="members" className="relative h-full w-full flex items-center justify-center pointer-events-none perspective-1000">
             {/* Center Stage Container */}
-            <div className="relative w-full max-w-4xl h-[60vh] flex items-center justify-center">
+            <div className="relative w-full max-w-4xl h-[60vh] flex items-center justify-center transform-style-3d">
                 <motion.div
                     initial={{ opacity: 0 }}
-                    style={{ opacity: useTransform(scrollProgress, [0.1, 0.15], [0, 1]) }}
+                    style={{ opacity: useTransform(scrollProgress, [0.05, 0.1], [0, 1]), y: useTransform(scrollProgress, [0.1, 0.2], [0, -100]) }}
                     className="absolute top-0 left-0 w-full text-center z-50 mb-8"
                 >
                     <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-2 text-white drop-shadow-2xl">THE SQUAD</h2>
@@ -52,16 +55,21 @@ export function Members({ scrollProgress }: MembersProps) {
                     // Definition of this member's time on stage
                     const start = START_SCROLL + (index * STEP);
                     const end = start + STEP;
-                    const mid = start + (STEP / 2);
 
-                    // Entry: Bottom-Left (-100% x, 100% y) -> Center
-                    // Exit: Center -> Top-Right (or Scale out)
+                    // Slightly overlap entry/exit for smoothness
+                    const fadeInEnd = start + (STEP * 0.2);
+                    const fadeOutStart = end - (STEP * 0.2);
 
-                    const opacity = useTransform(scrollProgress, [start, start + 0.02, end - 0.02, end], [0, 1, 1, 0]);
-                    const scale = useTransform(scrollProgress, [start, mid, end], [0.5, 1, 1.2]);
-                    const x = useTransform(scrollProgress, [start, mid, end], [-200, 0, 200]);
-                    const y = useTransform(scrollProgress, [start, mid, end], [200, 0, -200]);
-                    const rotate = useTransform(scrollProgress, [start, mid, end], [-15, 0, 15]);
+                    const opacity = useTransform(scrollProgress, [start, fadeInEnd, fadeOutStart, end], [0, 1, 1, 0]);
+                    const scale = useTransform(scrollProgress, [start, end], [0.6, 1.1]);
+
+                    // Alternating entry direction for visual interest
+                    const xStart = index % 2 === 0 ? -300 : 300;
+                    const xEnd = index % 2 === 0 ? 100 : -100;
+                    const x = useTransform(scrollProgress, [start, end], [xStart, xEnd]);
+
+                    const y = useTransform(scrollProgress, [start, end], [300, -50]);
+                    const rotate = useTransform(scrollProgress, [start, end], [index % 2 === 0 ? -15 : 15, 0]);
 
                     return (
                         <motion.div
@@ -73,7 +81,7 @@ export function Members({ scrollProgress }: MembersProps) {
                                 x,
                                 y,
                                 rotate,
-                                zIndex: index
+                                zIndex: index + 10 // Ensure members stack properly
                             }}
                             className="absolute w-80 md:w-96 aspect-[3/4] bg-neutral-800 rounded-2xl overflow-hidden border border-white/10 shadow-2xl pointer-events-auto cursor-pointer"
                             onClick={() => setSelectedMember(member)}
@@ -92,6 +100,23 @@ export function Members({ scrollProgress }: MembersProps) {
                         </motion.div>
                     );
                 })}
+
+                {/* FINAL PAN: "USELESS" TEXT REVEAL */}
+                <motion.div
+                    style={{
+                        opacity: useTransform(scrollProgress, [FINAL_PAN_START, FINAL_PAN_START + 0.05], [0, 1]),
+                        scale: useTransform(scrollProgress, [FINAL_PAN_START, FINAL_PAN_END], [2, 1]),
+                        x: useTransform(scrollProgress, [FINAL_PAN_START, FINAL_PAN_END], [400, 0]), // Starts right, moves center
+                        y: useTransform(scrollProgress, [FINAL_PAN_START, FINAL_PAN_END], [200, 0]), // Starts bottom, moves center
+                        rotateY: useTransform(scrollProgress, [FINAL_PAN_START, FINAL_PAN_END], [45, 0]),
+                        zIndex: 100
+                    }}
+                    className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                >
+                    <h1 className="text-[12vw] font-black tracking-tighter text-white drop-shadow-[0_0_50px_rgba(255,255,255,0.5)]">
+                        USELESS
+                    </h1>
+                </motion.div>
             </div>
 
             {/* Reuse Detail Overlay (Unchanged logic, just ensure Z-index is high) */}
