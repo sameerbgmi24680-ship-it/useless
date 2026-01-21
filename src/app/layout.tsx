@@ -4,6 +4,9 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { SmoothScroll } from "@/components/ui/SmoothScroll";
+import { MagneticCursor } from "@/components/ui/MagneticCursor";
+import { NoiseOverlay } from "@/components/ui/NoiseOverlay";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,9 +32,13 @@ export default function RootLayout({
           "min-h-screen bg-background text-foreground antialiased"
         )}
       >
-        <LoadingScreen />
-        <ScrollProgress />
-        {children}
+        <SmoothScroll>
+          <LoadingScreen />
+          <ScrollProgress />
+          <NoiseOverlay />
+          <MagneticCursor />
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );
