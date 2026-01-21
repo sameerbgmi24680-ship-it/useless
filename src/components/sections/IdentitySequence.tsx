@@ -25,20 +25,22 @@ export function IdentitySequence({ scrollProgress }: IdentitySequenceProps) {
             {chapters.map((chapter, index) => {
                 const start = START + (index * STEP);
                 const end = start + STEP;
-                const mid = start + (STEP * 0.5);
+                const mid = start + (STEP * 0.4);
 
+                // Leclerc Style: Deep Depth -> Center -> Fly Past
+                const scale = useTransform(scrollProgress, [start, mid, end], [0.2, 1, 3]);
                 const opacity = useTransform(scrollProgress, [start, mid, end], [0, 1, 0]);
-                const scale = useTransform(scrollProgress, [start, end], [0.8, 1.2]);
-                const blur = useTransform(scrollProgress, [start, mid, end], ["10px", "0px", "10px"]);
+                const blur = useTransform(scrollProgress, [start, mid, end], ["20px", "0px", "20px"]);
+                const rotateX = useTransform(scrollProgress, [start, end], [20, -20]);
 
-                // Directional motion
-                const xIn = chapter.align === "left" ? -100 : chapter.align === "right" ? 100 : 0;
+                // Directional motion (Optional, but Z-axis is primary now)
+                const xIn = chapter.align === "left" ? -50 : chapter.align === "right" ? 50 : 0;
                 const x = useTransform(scrollProgress, [start, mid, end], [xIn, 0, -xIn]);
 
                 return (
                     <motion.div
                         key={chapter.title}
-                        style={{ opacity, scale, filter: blur as any, x }}
+                        style={{ opacity, scale, filter: blur as any, x, rotateX }}
                         className="absolute inset-0 flex flex-col items-center justify-center z-20"
                     >
                         <h2 className={`${chapter.big ? "text-[8vw] md:text-[10vw]" : "text-[6vw] md:text-[7vw]"} font-black tracking-tighter text-white drop-shadow-2xl text-center leading-none`}>

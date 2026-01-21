@@ -13,12 +13,13 @@ export function CinematicContent({ scrollProgress }: CinematicContentProps) {
     // 90% to 100% : Finale
 
     // SCENE 1: MOMENTS / GALLERY (70% - 77%)
-    const galleryOpacity = useTransform(scrollProgress, [0.70, 0.72, 0.76, 0.78], [0, 1, 1, 0]);
-    const galleryX = useTransform(scrollProgress, [0.70, 0.72, 0.78], [100, 0, -100]);
+    const galleryOpacity = useTransform(scrollProgress, [0.70, 0.71, 0.76, 0.77], [0, 1, 1, 0]);
+    const galleryX = useTransform(scrollProgress, [0.70, 0.72, 0.78], ["100%", "0%", "-100%"]);
+    const galleryScale = useTransform(scrollProgress, [0.70, 0.74], [0.8, 1]);
 
     // SCENE 2: PROJECTS (77% - 84%)
-    const projectOpacity = useTransform(scrollProgress, [0.77, 0.79, 0.83, 0.85], [0, 1, 1, 0]);
-    const projectY = useTransform(scrollProgress, [0.77, 0.79, 0.85], [100, 0, -100]);
+    const projectOpacity = useTransform(scrollProgress, [0.77, 0.78, 0.83, 0.84], [0, 1, 1, 0]);
+    const projectY = useTransform(scrollProgress, [0.77, 0.79, 0.85], ["100%", "0%", "-100%"]);
 
     // SCENE 3: LIFESTYLE & CONTACT (84% - 90%)
     const lifestyleOpacity = useTransform(scrollProgress, [0.84, 0.86, 0.89, 0.91], [0, 1, 1, 0]);
@@ -32,7 +33,7 @@ export function CinematicContent({ scrollProgress }: CinematicContentProps) {
         <section className="relative w-full h-full pointer-events-none">
             {/* Gallery Layer */}
             <motion.div
-                style={{ opacity: galleryOpacity, x: galleryX }}
+                style={{ opacity: galleryOpacity, x: galleryX, scale: galleryScale }}
                 className="absolute inset-0 z-20 overflow-hidden flex items-center justify-center bg-black/80 backdrop-blur-sm"
             >
                 <div className="scale-75 pointer-events-auto">
