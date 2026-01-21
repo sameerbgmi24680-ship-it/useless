@@ -14,7 +14,8 @@
   --foreground: #ededed;
   --accent: #d4af37;
   --neon-purple: #b026ff;
-  --royal-gold: #ffd700;
+  --royal-gold: #D4AF37;
+  /* Updated to Spec */
   --card-bg: rgba(255, 255, 255, 0.03);
 
   /* Norris / Quadrant Palette */

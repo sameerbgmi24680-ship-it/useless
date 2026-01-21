@@ -13,56 +13,42 @@ interface HeroProps {
 
 export function Hero({ scrollProgress }: HeroProps) {
     const containerRef = useRef<HTMLDivElement>(null);
+    const baseLayerRef = useRef<HTMLDivElement>(null);
+    const midLayerRef = useRef<HTMLDivElement>(null);
     const textRef = useRef<HTMLHeadingElement>(null);
-    const subheadingRef = useRef<HTMLDivElement>(null);
 
     useGSAP(() => {
-        const text = textRef.current;
-        if (!text) return;
-
-        // 1. Parallax & Fade Out
-        gsap.to(text, {
-            yPercent: 30, // Move down
-            opacity: 0,
-            scale: 1.1,
-            filter: "blur(10px)",
+        const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: containerRef.current,
                 start: "top top",
-                end: "bottom center",
-                scrub: true,
+                end: "bottom top",
+                scrub: 0.5,
             }
         });
 
-        // 2. High-Intensity Velocity Skew (The "Warp" Effect)
+        // Deep Gradient Parallax Spec
+        // Base: y: 20%
+        // Mid: y: 50%
+        // Text: y: -50% (Fast reverse)
+
+        tl.to(baseLayerRef.current, { yPercent: 20, ease: "none" }, 0);
+        tl.to(midLayerRef.current, { yPercent: 50, ease: "none" }, 0);
+        tl.to(textRef.current, { yPercent: -50, scale: 0.8, ease: "none" }, 0);
+
+        // Velocity Skew on Text
         ScrollTrigger.create({
             trigger: containerRef.current,
             start: "top top",
             end: "bottom top",
             onUpdate: (self) => {
                 const velocity = self.getVelocity();
-                const skewAmount = velocity / 300;
-                const scaleAmount = 1 + (Math.abs(velocity) / 10000);
-
-                gsap.to(text, {
-                    skewY: skewAmount,
-                    scale: scaleAmount,
+                gsap.to(textRef.current, {
+                    skewY: velocity / 300,
                     overwrite: "auto",
                     duration: 0.1,
                     ease: "power3.out"
                 });
-            }
-        });
-
-        // 3. Subheading Exit
-        gsap.to(subheadingRef.current, {
-            y: -50,
-            opacity: 0,
-            scrollTrigger: {
-                trigger: containerRef.current,
-                start: "top top",
-                end: "20% top",
-                scrub: true,
             }
         });
 
@@ -71,40 +57,29 @@ export function Hero({ scrollProgress }: HeroProps) {
     return (
         <section
             ref={containerRef}
-            className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden"
+            className="relative h-screen w-full overflow-hidden bg-[var(--void-black)]"
         >
-            {/* Background Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black via-neutral-900 to-black opacity-50 z-0" />
+            {/* Base Layer: Monochrome Texture */}
+            <div
+                ref={baseLayerRef}
+                className="absolute inset-0 bg-[url('/images/asphalt-texture.jpg')] bg-cover bg-center grayscale opacity-80"
+            />
 
-            {/* Main Text */}
-            <div className="relative z-10 flex flex-col items-center">
+            {/* Mid Layer: Gradient Map */}
+            {/* mix-blend-mode: hard-light. Flow from Royal Blue to Electric Lime */}
+            <div
+                ref={midLayerRef}
+                className="absolute inset-0 bg-gradient-to-br from-[#002366] to-[var(--lando-neon)] mix-blend-hard-light opacity-60"
+            />
+
+            {/* Top Layer: Typography */}
+            <div className="relative z-10 h-full flex flex-col items-center justify-center">
                 <h1
                     ref={textRef}
-                    className="text-[18vw] font-black leading-none tracking-tighter text-transparent bg-clip-text select-none text-center will-change-transform"
-                    style={{
-                        backgroundImage: "url('/images/usless-group.jpg')", // Ensure this path is valid
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        WebkitBackgroundClip: "text",
-                    }}
+                    className="text-[18vw] font-black leading-none tracking-tighter text-white select-none text-center mix-blend-overlay"
                 >
                     USELESS
                 </h1>
-
-                <div ref={subheadingRef} className="mt-8 text-center">
-                    <p className="text-[var(--royal-gold)] font-mono text-xs uppercase tracking-[0.5em] mb-2">
-                        EST. 2025 • THE COLLECTIVE
-                    </p>
-                    <p className="text-white/40 font-light text-sm tracking-wider">
-                        A creative tech collective blending design, code, and culture
-                    </p>
-                </div>
-            </div>
-
-            {/* Scroll Indicator */}
-            <div className="absolute bottom-12 flex flex-col items-center opacity-50 animate-pulse">
-                <p className="text-[10px] uppercase tracking-widest text-white/60 mb-2">Scroll to Reveal</p>
-                <div className="w-px h-12 bg-gradient-to-b from-[var(--royal-gold)] to-transparent" />
             </div>
         </section>
     );
