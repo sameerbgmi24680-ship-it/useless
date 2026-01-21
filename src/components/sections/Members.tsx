@@ -55,19 +55,18 @@ export function Members({ scrollProgress }: MembersProps) {
 
                     // Smooth overlap
                     const mid = start + (STEP * 0.5);
-                    const opacity = useTransform(scrollProgress, [start, start + 0.01, end - 0.01, end], [0, 1, 1, 0]);
+                    const opacity = useTransform(scrollProgress, [start, start + 0.02, end - 0.02, end], [0, 1, 1, 0]);
 
-                    // Cinematic Scale: Small (Back) -> Large (Front) -> Small (Back)
-                    const scale = useTransform(scrollProgress, [start, mid, end], [0.6, 1.2, 0.6]);
+                    // Royal Rise: Gentle, vertical, commanding
+                    // No chaotic side movement. Just rise from depth.
+                    const scale = useTransform(scrollProgress, [start, mid, end], [0.9, 1.05, 0.9]);
+                    const y = useTransform(scrollProgress, [start, mid, end], [100, 0, -100]);
 
-                    // Alternating entry direction (Bottom Corners -> Center)
-                    const isEven = index % 2 === 0;
-                    const xStart = isEven ? -500 : 500; // Far off-screen
-                    const xEnd = isEven ? 200 : -200;   // Exit side
-                    const x = useTransform(scrollProgress, [start, mid, end], [xStart, 0, xEnd]);
+                    // Very subtle rotation for life
+                    const rotate = useTransform(scrollProgress, [start, end], [index % 2 === 0 ? -2 : 2, 0]);
 
-                    const y = useTransform(scrollProgress, [start, mid, end], [800, 0, -200]);
-                    const rotate = useTransform(scrollProgress, [start, mid, end], [isEven ? -45 : 45, 0, isEven ? 45 : -45]);
+                    // No X motion - stay centered and focused
+                    const x = 0;
 
                     return (
                         <motion.div

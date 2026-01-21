@@ -42,7 +42,7 @@ export function Hero({ scrollProgress }: HeroProps) {
                 y: contentY,
                 opacity: containerOpacity, // Ensure it leaves
                 filter: useMotionTemplate`blur(${contentBlur})`,
-                pointerEvents: useTransform(scrollProgress, (v) => v > 0.1 ? "none" : "auto") // Disable interactions when gone
+                pointerEvents: useTransform(scrollProgress, (v: any) => v > 0.1 ? "none" : "auto") // Disable interactions when gone
             }}
         >
             {/* ... Background ... */}
