@@ -34,13 +34,16 @@ export default function RootLayout({
           "min-h-screen bg-background text-foreground antialiased"
         )}
       >
-        <SmoothScroll>
-          <LoadingScreen />
-          <ScrollProgress />
-          <NoiseOverlay />
-          <MagneticCursor />
-          {children}
-        </SmoothScroll>
+        <MembersProvider>
+          <SmoothScroll>
+            <GatekeeperLoader onComplete={() => { }} />
+            <MemberOverlay />
+            <ScrollProgress />
+            <NoiseOverlay />
+            <MagneticCursor />
+            {children}
+          </SmoothScroll>
+        </MembersProvider>
       </body>
     </html>
   );
