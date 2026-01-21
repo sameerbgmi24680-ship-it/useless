@@ -25,9 +25,11 @@ export function CinematicContent({ scrollProgress }: CinematicContentProps) {
     const lifestyleOpacity = useTransform(scrollProgress, [0.84, 0.86, 0.89, 0.91], [0, 1, 1, 0]);
 
     // FINALE: USELESS (90% - 100%)
-    const finalOpacity = useTransform(scrollProgress, [0.90, 0.92], [0, 1]);
-    const finalScale = useTransform(scrollProgress, [0.90, 1.0], [2, 1]); // Settle
-    const finalRotate = useTransform(scrollProgress, [0.90, 1.0], [20, 0]);
+    // "The Crown" - Heavy, slow settle.
+    const finalOpacity = useTransform(scrollProgress, [0.90, 0.92, 0.98], [0, 1, 1]);
+    const finalScale = useTransform(scrollProgress, [0.90, 1.0], [1.1, 1]); // Subtle settle
+    const finalY = useTransform(scrollProgress, [0.90, 1.0], [50, 0]); // Rise into place
+    const finalRotateX = useTransform(scrollProgress, [0.90, 1.0], [20, 0]); // Tilt up
 
     return (
         <section className="relative w-full h-full pointer-events-none">
@@ -64,10 +66,10 @@ export function CinematicContent({ scrollProgress }: CinematicContentProps) {
 
             {/* GRAND FINALE */}
             <motion.div
-                style={{ opacity: finalOpacity, scale: finalScale, rotateX: finalRotate, rotateZ: finalRotate }}
-                className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none mix-blend-difference"
+                style={{ opacity: finalOpacity, scale: finalScale, y: finalY, rotateX: finalRotateX }}
+                className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none"
             >
-                <h1 className="text-[15vw] font-black tracking-tighter text-white">
+                <h1 className="text-[12vw] font-black tracking-tighter text-white drop-shadow-2xl">
                     USELESS
                 </h1>
             </motion.div>

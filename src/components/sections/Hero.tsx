@@ -22,7 +22,10 @@ export function Hero({ scrollProgress }: HeroProps) {
 
     const contentScale = useTransform(scrollProgress, [0, 0.1], [1, 0.8]);
     const contentY = useTransform(scrollProgress, [0, 0.1], ["0%", "-20%"]);
-    const contentBlur = useTransform(scrollProgress, [0, 0.08, 0.15], ["0px", "0px", "10px"]);
+    const contentBlur = useTransform(scrollProgress, [0, 0.08, 0.12], ["0px", "0px", "20px"]);
+
+    // NEW: Clean Exit (Must fade out completely before Identity starts)
+    const containerOpacity = useTransform(scrollProgress, [0, 0.08, 0.12], [1, 1, 0]);
 
     function handleMouseMove({ currentTarget, clientX, clientY }: MouseEvent) {
         const { left, top } = currentTarget.getBoundingClientRect();
@@ -37,7 +40,9 @@ export function Hero({ scrollProgress }: HeroProps) {
             style={{
                 scale: contentScale,
                 y: contentY,
-                filter: useMotionTemplate`blur(${contentBlur})`
+                opacity: containerOpacity, // Ensure it leaves
+                filter: useMotionTemplate`blur(${contentBlur})`,
+                pointerEvents: useTransform(scrollProgress, (v) => v > 0.1 ? "none" : "auto") // Disable interactions when gone
             }}
         >
             {/* ... Background ... */}
