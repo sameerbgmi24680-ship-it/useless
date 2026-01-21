@@ -67,11 +67,25 @@ export function CinematicContent({ scrollProgress }: CinematicContentProps) {
             {/* GRAND FINALE */}
             <motion.div
                 style={{ opacity: finalOpacity, scale: finalScale, y: finalY, rotateX: finalRotateX }}
-                className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none"
+                className="absolute inset-0 z-50 flex flex-col items-center justify-center pointer-events-none"
             >
-                <h1 className="text-[12vw] font-black tracking-tighter text-white drop-shadow-2xl">
+                <h1 className="text-[12vw] font-black tracking-tighter text-transparent bg-clip-text drop-shadow-2xl"
+                    style={{
+                        backgroundImage: "linear-gradient(to bottom, #FFD700, #B8860B)", // Royal Gold Gradient
+                        WebkitTextStroke: "1px rgba(255, 215, 0, 0.3)"
+                    }}
+                >
                     USELESS
                 </h1>
+
+                {/* Copyright Footer */}
+                <motion.p
+                    initial={{ opacity: 0 }}
+                    style={{ opacity: finalOpacity }}
+                    className="absolute bottom-8 text-[10px] md:text-xs text-[#B8860B] uppercase tracking-[0.3em] font-mono"
+                >
+                    © USELESS Collective — Engineered in Motion
+                </motion.p>
             </motion.div>
         </section>
     );

@@ -78,10 +78,12 @@ export function Hero({ scrollProgress }: HeroProps) {
 
                     {/* Layer 2: Photo Text (Fades IN) */}
                     <motion.h1
-                        className="relative text-[15vw] font-black leading-none tracking-tighter text-transparent bg-clip-text select-none"
+                        className="relative text-[15vw] font-black leading-none tracking-tighter text-transparent bg-clip-text select-none text-center"
                         style={{
                             backgroundImage: "url('/images/usless-group.jpg')",
                             backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            backgroundPositionY: useTransform(scrollProgress, [0, 0.1], ["0%", "30%"]), // Parallax within text
                             WebkitBackgroundClip: "text",
                             opacity: photoOpacity,
                         }}

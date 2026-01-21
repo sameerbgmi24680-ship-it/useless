@@ -1,162 +1,117 @@
-import { motion, useTransform } from "framer-motion";
-import { Github, Instagram, Linkedin, Twitter } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { AnimatePresence } from "framer-motion";
-import { useState } from "react";
-import { X, ChevronRight } from "lucide-react";
+import { motion, useTransform, useScroll } from "framer-motion";
+import { members } from "@/data/members"; // Use shared data
+import { useRouter } from "next/navigation";
+import { ArrowRight } from "lucide-react";
 
 interface MembersProps {
     scrollProgress: any;
 }
 
-// Updated Members List with rotated images
-const members = [
-    { name: "J. Sashank", role: "Team Lead & Architect", bio: "Orchestrating the chaos into code.", persona: "The Strategist", image: "/images/group-1.jpg" },
-    { name: "D Savirthru", role: "Frontend Specialist", bio: "Crafting pixels with precision.", persona: "The Artist", image: "/images/group-2.jpg" },
-    { name: "Raskas S Karthik", role: "Backend Engineer", bio: "Building the backbone of our reality.", persona: "The Architect", image: "/images/group-3.jpg" },
-    { name: "S Sai Vodapally", role: "Creative Director", bio: "Visionary behind the visuals.", persona: "The Visionary", image: "/images/group-1.jpg" },
-    { name: "Sameer", role: "Full Stack Dev", bio: "Connecting dots across the stack.", persona: "The Builder", image: "/images/group-2.jpg" },
-    { name: "Shriyan Bohra", role: "UI/UX Designer", bio: "Designing experiences that matter.", persona: "The Designer", image: "/images/group-3.jpg" },
-    { name: "Sathya Krishna", role: "Content Strategist", bio: "Telling stories that stick.", persona: "The Storyteller", image: "/images/group-1.jpg" },
-    { name: "Monuika Dola", role: "Developer", bio: "Turning coffee into code.", persona: "The Coder", image: "/images/group-2.jpg" },
-    { name: "Anvith", role: "Systems Engineer", bio: "Optimizing the machine.", persona: "The Engineer", image: "/images/group-3.jpg" },
-    { name: "Snighda (Reddy)", role: "Developer", bio: "Solving problems one bug at a time.", persona: "The Fixer", image: "/images/group-1.jpg" },
-    { name: "Srija", role: "Designer", bio: "Adding color to the world.", persona: "The Creative", image: "/images/group-2.jpg" },
-];
-
 export function Members({ scrollProgress }: MembersProps) {
-    const [selectedMember, setSelectedMember] = useState<typeof members[0] | null>(null);
+    const router = useRouter();
 
-    // Scroll Timeline Configuration
-    // Moved to occur AFTER Identity Sequence (10-35%)
-    const START_SCROLL = 0.35; // Members start appearing
-    const SQUAD_END_SCROLL = 0.70; // Last member finishes
+    // Timeline Configuration (35% to 70%)
+    const START = 0.35;
+    const END = 0.70;
 
-    const TOTAL_SQUAD_DURATION = SQUAD_END_SCROLL - START_SCROLL;
-    const STEP = TOTAL_SQUAD_DURATION / members.length;
+    // Total horizontal distance needed = 100% * (number of members)
+    // We want to translate the "Track" to the left.
+    // Ideally, we move by (N-1) * 100vw? Or slightly less to keep them centered?
+    // Let's do a strict track movement.
+
+    // Opacity: Fade in at start, Fade out REALLY cleanly at end
+    const opacity = useTransform(scrollProgress, [START, START + 0.05, END - 0.05, END], [0, 1, 1, 0]);
+    const pointerEvents = useTransform(scrollProgress, (v: any) => v >= START && v <= END ? "auto" : "none");
+
+    // Horizontal Movement
+    // Map scroll range [0.35, 0.70] to x transform ["0%", "-100% * (N-1)"]?
+    // Actually, we want the first member to start in Center, then move Left.
+    // The last member ends in Center.
+    // So if we have N members, we need N "frames".
+
+    // We use a large flex container (width = N * 100vw).
+    // Initial X = 0 (first slide). Final X = -(N-1) * 100vw (last slide).
+    const numberOfMembers = members.length;
+    const xInput = [START, END];
+    const xOutput = ["0vw", `-${(numberOfMembers - 1) * 100}vw`];
+
+    const x = useTransform(scrollProgress, xInput, xOutput);
+
+    // Progress Bar Logic (Which member is active?)
+    // We can map scroll to index: 0 to N-1
+    // const currentDate = useTransform(scrollProgress, [START, END], [2018, 2025]); 
 
     return (
-        <section id="members" className="relative h-full w-full flex items-center justify-center pointer-events-none perspective-1000">
-            {/* Center Stage Container */}
-            <div className="relative w-full max-w-4xl h-[60vh] flex items-center justify-center transform-style-3d">
+        <section
+            id="members"
+            className="relative h-full w-full overflow-hidden"
+            style={{ pointerEvents: "none" }} // Container is none, inner is controlled
+        >
+            <motion.div
+                style={{ opacity, pointerEvents }}
+                className="absolute inset-0 flex items-center"
+            >
+                {/* The Horizontal Track */}
                 <motion.div
-                    initial={{ opacity: 0 }}
-                    style={{ opacity: useTransform(scrollProgress, [0.05, 0.1], [0, 1]), y: useTransform(scrollProgress, [0.1, 0.2], [0, -100]) }}
-                    className="absolute top-0 left-0 w-full text-center z-50 mb-8"
+                    style={{ x }}
+                    className="flex flex-row items-center h-full"
                 >
-                    <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-2 text-white drop-shadow-2xl">THE SQUAD</h2>
-                    <p className="text-white/60 text-lg uppercase tracking-widest">Est. 2025</p>
+                    {members.map((member, index) => {
+                        return (
+                            <div
+                                key={member.id}
+                                className="w-[100vw] h-screen flex-shrink-0 flex flex-col md:flex-row items-center justify-center p-8 md:p-20 gap-8 md:gap-20"
+                            >
+                                {/* TEXT - Left Side */}
+                                <div className="w-full md:w-1/3 flex flex-col justify-center items-start space-y-4">
+                                    <p className="text-[var(--royal-gold)] font-mono text-sm uppercase tracking-widest">
+                                        0{index + 1} / {numberOfMembers}
+                                    </p>
+                                    <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter">
+                                        {member.name}
+                                    </h2>
+                                    <p className="text-white/60 text-lg md:text-xl font-light max-w-md">
+                                        {member.role}
+                                    </p>
+
+                                    <button
+                                        onClick={() => router.push(`/members/${member.id}`)}
+                                        className="mt-8 group flex items-center gap-3 text-white/80 hover:text-white transition-colors"
+                                    >
+                                        <span className="uppercase tracking-widest text-xs border-b border-transparent group-hover:border-[var(--neon-purple)] pb-1 transition-all">
+                                            View Profile
+                                        </span>
+                                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                    </button>
+                                </div>
+
+                                {/* IMAGE - Right Side (Parallax feel) */}
+                                <div
+                                    className="w-full md:w-1/3 aspect-[3/4] relative overflow-hidden bg-neutral-900 shadow-2xl skew-x-[-2deg] hover:skew-x-0 transition-transform duration-700 cursor-pointer group"
+                                    onClick={() => router.push(`/members/${member.id}`)}
+                                >
+                                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10" />
+                                    <img
+                                        src={member.image}
+                                        alt={member.name}
+                                        className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000 grayscale group-hover:grayscale-0"
+                                    />
+
+                                    {/* Persona Badge */}
+                                    <div className="absolute bottom-6 left-6 z-20 overflow-hidden">
+                                        <p className="text-white font-black text-4xl translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                                            {member.persona}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </motion.div>
 
-                {members.map((member, index) => {
-                    // Definition of this member's time on stage
-                    const start = START_SCROLL + (index * STEP);
-                    const end = start + STEP;
-
-                    // Smooth overlap
-                    const mid = start + (STEP * 0.5);
-                    const opacity = useTransform(scrollProgress, [start, start + 0.02, end - 0.02, end], [0, 1, 1, 0]);
-
-                    // Royal Rise: Gentle, vertical, commanding
-                    // No chaotic side movement. Just rise from depth.
-                    const scale = useTransform(scrollProgress, [start, mid, end], [0.9, 1.05, 0.9]);
-                    const y = useTransform(scrollProgress, [start, mid, end], [100, 0, -100]);
-
-                    // Very subtle rotation for life
-                    const rotate = useTransform(scrollProgress, [start, end], [index % 2 === 0 ? -2 : 2, 0]);
-
-                    // No X motion - stay centered and focused
-                    const x = 0;
-
-                    return (
-                        <motion.div
-                            key={member.name}
-                            layoutId={`card-${member.name}`}
-                            style={{
-                                opacity,
-                                scale,
-                                x,
-                                y,
-                                rotate,
-                                zIndex: index + 10 // Ensure members stack properly
-                            }}
-                            className="absolute w-80 md:w-96 aspect-[3/4] bg-neutral-800 rounded-2xl overflow-hidden border border-white/10 shadow-2xl pointer-events-auto cursor-pointer"
-                            onClick={() => setSelectedMember(member)}
-                        >
-                            {/* Content */}
-                            <div className="relative h-full w-full">
-                                <img src={member.image} alt={member.name} className="absolute inset-0 w-full h-full object-cover grayscale brightness-75 hover:grayscale-0 hover:brightness-100 transition-all duration-500" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90" />
-
-                                <div className="absolute bottom-6 left-6 right-6">
-                                    <p className="text-[var(--royal-gold)] font-mono text-xs uppercase tracking-wider mb-1">{member.role}</p>
-                                    <h3 className="text-2xl font-bold text-white mb-2">{member.name}</h3>
-                                    <p className="text-white/60 text-xs line-clamp-2">{member.bio}</p>
-                                </div>
-                            </div>
-                        </motion.div>
-                    );
-                })}
-            </div>
-
-            {/* Reuse Detail Overlay (Unchanged logic, just ensure Z-index is high) */}
-            <AnimatePresence>
-                {selectedMember && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12 bg-black/95 backdrop-blur-xl pointer-events-auto"
-                        onClick={() => setSelectedMember(null)}
-                    >
-                        {/* Detail Modal Content (Same as before) */}
-                        <motion.div
-                            layoutId={`card-${selectedMember.name}`}
-                            className="bg-neutral-900 w-full max-w-4xl h-[80vh] rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-2xl relative border border-white/10"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <button
-                                onClick={() => setSelectedMember(null)}
-                                className="absolute top-4 right-4 z-50 p-2 bg-black/50 rounded-full text-white hover:bg-white hover:text-black transition-colors"
-                            >
-                                <X className="w-6 h-6" />
-                            </button>
-
-                            <div className="w-full md:w-1/2 h-1/2 md:h-full relative">
-                                <img src={selectedMember.image} alt={selectedMember.name} className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-transparent to-transparent md:bg-gradient-to-r" />
-                            </div>
-
-                            <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center space-y-6">
-                                <div>
-                                    <motion.p layoutId={`role-${selectedMember.name}`} className="text-[var(--royal-gold)] font-mono text-sm uppercase tracking-wider mb-2">
-                                        {selectedMember.role}
-                                    </motion.p>
-                                    <motion.h2 layoutId={`name-${selectedMember.name}`} className="text-4xl md:text-5xl font-black tracking-tight text-white mb-4">
-                                        {selectedMember.name}
-                                    </motion.h2>
-                                    <div className="h-1 w-20 bg-[var(--neon-purple)] rounded-full mb-6" />
-                                </div>
-
-                                <p className="text-lg text-white/70 leading-relaxed">
-                                    {selectedMember.bio}
-                                </p>
-
-                                <div className="pt-8 grid grid-cols-2 gap-4">
-                                    <div className="p-4 bg-white/5 rounded-lg border border-white/5">
-                                        <p className="text-xs text-white/40 uppercase mb-1">Persona</p>
-                                        <p className="text-white font-medium">{selectedMember.persona}</p>
-                                    </div>
-                                    <div className="p-4 bg-white/5 rounded-lg border border-white/5">
-                                        <p className="text-xs text-white/40 uppercase mb-1">Join Date</p>
-                                        <p className="text-white font-medium">Est. 2025</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                {/* Global Section Title (Stays pinned?) No, it scrolls with them or stays fixed? */}
+                {/* Leclerc has subtle fixed elements. Let's keep it clean for now. */}
+            </motion.div>
         </section>
     );
 }

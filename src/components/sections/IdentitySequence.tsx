@@ -5,11 +5,11 @@ interface IdentitySequenceProps {
 }
 
 const chapters = [
-    { title: "THE BRAINS", desc: "Strategizing the chaos.", color: "#2E5CFF" }, // Electric Royal Blue
-    { title: "THE VISION", desc: "Seeing what others don't.", color: "#9D00FF" }, // Deep Violet
-    { title: "THE HEART", desc: "Pumping life into code.", color: "#FF0040" }, // Crimson Neon
-    { title: "THE SOUL", desc: "The essence of our craft.", color: "#00F0FF" }, // Cyan Glow
-    { title: "THE MUSCLE", desc: "Building with brute force.", color: "#FFD700" }, // Royal Gold
+    { title: "THE BRAINS", desc: "Strategizing the chaos.", color: "#00F0FF" }, // Electric Blue (Corrected)
+    { title: "THE VISION", desc: "Seeing what others don't.", color: "#BD00FF" }, // Neon Violet
+    { title: "THE HEART", desc: "Pumping life into code.", color: "#FF003C" }, // Neon Crimson
+    { title: "THE SOUL", desc: "The essence of our craft.", color: "#00FFEA" }, // Cyan
+    { title: "THE MUSCLE", desc: "Building with brute force.", color: "#FFD700" }, // Warm Gold
     { title: "THIS IS USELESS", desc: "We are the collective.", color: "#FFFFFF", big: true },
 ];
 
@@ -44,8 +44,8 @@ export function IdentitySequence({ scrollProgress }: IdentitySequenceProps) {
                             className={`${chapter.big ? "text-[10vw]" : "text-[6vw] md:text-[8vw]"} font-black tracking-tighter text-transparent bg-clip-text drop-shadow-2xl text-center leading-none`}
                             style={{
                                 backgroundImage: `linear-gradient(to bottom, white, ${chapter.color})`,
-                                textShadow: `0 0 20px ${chapter.color}40`,
-                                WebkitBackgroundClip: "text"
+                                textShadow: `0 0 30px ${chapter.color}60`, // Enhanced glow
+                                WebkitBackgroundClip: "text",
                             }}
                         >
                             {chapter.title}
@@ -53,7 +53,7 @@ export function IdentitySequence({ scrollProgress }: IdentitySequenceProps) {
                         {chapter.desc && (
                             <p
                                 className="mt-4 font-mono text-xs md:text-sm tracking-[0.5em] uppercase opacity-80"
-                                style={{ color: chapter.color }}
+                                style={{ color: chapter.color, textShadow: `0 0 10px ${chapter.color}40` }}
                             >
                                 {chapter.desc}
                             </p>
