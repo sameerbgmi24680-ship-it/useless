@@ -1,8 +1,6 @@
 import { motion, useTransform } from "framer-motion";
 import { Github, Instagram, Linkedin, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-// ... imports
 import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { X, ChevronRight } from "lucide-react";
@@ -30,7 +28,6 @@ export function Members({ scrollProgress }: MembersProps) {
     const [selectedMember, setSelectedMember] = useState<typeof members[0] | null>(null);
 
     // Scroll Timeline Configuration
-    // Scroll Timeline Configuration
     // Moved to occur AFTER Identity Sequence (10-35%)
     const START_SCROLL = 0.35; // Members start appearing
     const SQUAD_END_SCROLL = 0.70; // Last member finishes
@@ -56,20 +53,21 @@ export function Members({ scrollProgress }: MembersProps) {
                     const start = START_SCROLL + (index * STEP);
                     const end = start + STEP;
 
-                    // Slightly overlap entry/exit for smoothness
-                    const fadeInEnd = start + (STEP * 0.2);
-                    const fadeOutStart = end - (STEP * 0.2);
+                    // Smooth overlap
+                    const mid = start + (STEP * 0.5);
+                    const opacity = useTransform(scrollProgress, [start, start + 0.01, end - 0.01, end], [0, 1, 1, 0]);
 
-                    const opacity = useTransform(scrollProgress, [start, fadeInEnd, fadeOutStart, end], [0, 1, 1, 0]);
-                    const scale = useTransform(scrollProgress, [start, end], [0.6, 1.1]);
+                    // Cinematic Scale: Small (Back) -> Large (Front) -> Small (Back)
+                    const scale = useTransform(scrollProgress, [start, mid, end], [0.6, 1.2, 0.6]);
 
-                    // Alternating entry direction for visual interest
-                    const xStart = index % 2 === 0 ? -300 : 300;
-                    const xEnd = index % 2 === 0 ? 100 : -100;
-                    const x = useTransform(scrollProgress, [start, end], [xStart, xEnd]);
+                    // Alternating entry direction (Bottom Corners -> Center)
+                    const isEven = index % 2 === 0;
+                    const xStart = isEven ? -500 : 500; // Far off-screen
+                    const xEnd = isEven ? 200 : -200;   // Exit side
+                    const x = useTransform(scrollProgress, [start, mid, end], [xStart, 0, xEnd]);
 
-                    const y = useTransform(scrollProgress, [start, end], [300, -50]);
-                    const rotate = useTransform(scrollProgress, [start, end], [index % 2 === 0 ? -15 : 15, 0]);
+                    const y = useTransform(scrollProgress, [start, mid, end], [800, 0, -200]);
+                    const rotate = useTransform(scrollProgress, [start, mid, end], [isEven ? -45 : 45, 0, isEven ? 45 : -45]);
 
                     return (
                         <motion.div
@@ -100,8 +98,6 @@ export function Members({ scrollProgress }: MembersProps) {
                         </motion.div>
                     );
                 })}
-
-                {/* Final Pan moved to separate component at end of scroll */}
             </div>
 
             {/* Reuse Detail Overlay (Unchanged logic, just ensure Z-index is high) */}
@@ -114,7 +110,7 @@ export function Members({ scrollProgress }: MembersProps) {
                         className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12 bg-black/95 backdrop-blur-xl pointer-events-auto"
                         onClick={() => setSelectedMember(null)}
                     >
-                        {/* ... (Same Detail Card Content) ... */}
+                        {/* Detail Modal Content (Same as before) */}
                         <motion.div
                             layoutId={`card-${selectedMember.name}`}
                             className="bg-neutral-900 w-full max-w-4xl h-[80vh] rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-2xl relative border border-white/10"
