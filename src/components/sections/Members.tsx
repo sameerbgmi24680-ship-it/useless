@@ -1,117 +1,95 @@
-import { motion, useTransform, useScroll } from "framer-motion";
-import { members } from "@/data/members"; // Use shared data
+import { useRef } from "react";
+import { members } from "@/data/members";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface MembersProps {
-    scrollProgress: any;
+    scrollProgress: any; // Kept for interface compatibility but unused in GSAP version
 }
 
 export function Members({ scrollProgress }: MembersProps) {
     const router = useRouter();
+    const containerRef = useRef<HTMLDivElement>(null);
+    const trackRef = useRef<HTMLDivElement>(null);
 
-    // Timeline Configuration (35% to 70%)
-    const START = 0.35;
-    const END = 0.70;
+    useGSAP(() => {
+        const track = trackRef.current;
+        if (!track) return;
 
-    // Total horizontal distance needed = 100% * (number of members)
-    // We want to translate the "Track" to the left.
-    // Ideally, we move by (N-1) * 100vw? Or slightly less to keep them centered?
-    // Let's do a strict track movement.
+        // Calculate total scrolling width required
+        // We move the track left by (totalWidth - viewportWidth)
+        const scrollDistance = track.scrollWidth - window.innerWidth;
 
-    // Opacity: Fade in at start, Fade out REALLY cleanly at end
-    const opacity = useTransform(scrollProgress, [START, START + 0.05, END - 0.05, END], [0, 1, 1, 0]);
-    const pointerEvents = useTransform(scrollProgress, (v: any) => v >= START && v <= END ? "auto" : "none");
+        gsap.to(track, {
+            x: -scrollDistance,
+            ease: "none",
+            scrollTrigger: {
+                trigger: containerRef.current,
+                pin: true,
+                scrub: 1, // Momentum scrubbing
+                start: "top top",
+                // DYNAMIC END CALCULATION as requested
+                end: () => "+=" + scrollDistance,
+                invalidateOnRefresh: true,
+            }
+        });
 
-    // Horizontal Movement
-    // Map scroll range [0.35, 0.70] to x transform ["0%", "-100% * (N-1)"]?
-    // Actually, we want the first member to start in Center, then move Left.
-    // The last member ends in Center.
-    // So if we have N members, we need N "frames".
+        // Parallax for images?
+        // Let's keep it simple first to gain trust on the physics.
 
-    // We use a large flex container (width = N * 100vw).
-    // Initial X = 0 (first slide). Final X = -(N-1) * 100vw (last slide).
-    const numberOfMembers = members.length;
-    const xInput = [START, END];
-    const xOutput = ["0vw", `-${(numberOfMembers - 1) * 100}vw`];
-
-    const x = useTransform(scrollProgress, xInput, xOutput);
-
-    // Progress Bar Logic (Which member is active?)
-    // We can map scroll to index: 0 to N-1
-    // const currentDate = useTransform(scrollProgress, [START, END], [2018, 2025]); 
+    }, { scope: containerRef });
 
     return (
+        // The container that gets pinned
         <section
-            id="members"
-            className="relative h-full w-full overflow-hidden"
-            style={{ pointerEvents: "none" }} // Container is none, inner is controlled
+            ref={containerRef}
+            id="members-gsap"
+            className="relative h-screen w-full overflow-hidden bg-black"
         >
-            <motion.div
-                style={{ opacity, pointerEvents }}
-                className="absolute inset-0 flex items-center"
+            {/* The Moving Track */}
+            <div
+                ref={trackRef}
+                className="flex flex-row items-center h-full w-fit will-change-transform"
             >
-                {/* The Horizontal Track */}
-                <motion.div
-                    style={{ x }}
-                    className="flex flex-row items-center h-full"
-                >
-                    {members.map((member, index) => {
-                        return (
-                            <div
-                                key={member.id}
-                                className="w-[100vw] h-screen flex-shrink-0 flex flex-col md:flex-row items-center justify-center p-8 md:p-20 gap-8 md:gap-20"
+                {/* Intro Card (optional, or just start with first member) */}
+                <div className="w-[50vw] h-full flex items-center justify-center flex-shrink-0">
+                    <h2 className="text-8xl font-black text-white/10 tracking-tighter rotate-90">THE SQUAD</h2>
+                </div>
+
+                {members.map((member, index) => (
+                    <div
+                        key={member.id}
+                        className="squad-card w-[80vw] md:w-[60vw] h-full flex-shrink-0 flex flex-col items-center justify-center relative border-r border-white/5"
+                    >
+                        {/* Text Content */}
+                        <div className="z-10 text-center mb-8">
+                            <p className="text-[var(--royal-gold)] font-mono text-sm uppercase tracking-[0.2em] mb-2">
+                                0{index + 1}
+                            </p>
+                            <h2
+                                className="text-6xl md:text-8xl font-black text-white tracking-tighter cursor-pointer hover:text-[var(--lando-neon)] transition-colors duration-300"
+                                onClick={() => router.push(`/members/${member.id}`)}
                             >
-                                {/* TEXT - Left Side */}
-                                <div className="w-full md:w-1/3 flex flex-col justify-center items-start space-y-4">
-                                    <p className="text-[var(--royal-gold)] font-mono text-sm uppercase tracking-widest">
-                                        0{index + 1} / {numberOfMembers}
-                                    </p>
-                                    <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter">
-                                        {member.name}
-                                    </h2>
-                                    <p className="text-white/60 text-lg md:text-xl font-light max-w-md">
-                                        {member.role}
-                                    </p>
+                                {member.name.split(' ')[0]}
+                            </h2>
+                            <p className="text-white/50">{member.role}</p>
+                        </div>
 
-                                    <button
-                                        onClick={() => router.push(`/members/${member.id}`)}
-                                        className="mt-8 group flex items-center gap-3 text-white/80 hover:text-white transition-colors"
-                                    >
-                                        <span className="uppercase tracking-widest text-xs border-b border-transparent group-hover:border-[var(--neon-purple)] pb-1 transition-all">
-                                            View Profile
-                                        </span>
-                                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                                    </button>
-                                </div>
-
-                                {/* IMAGE - Right Side (Parallax feel) */}
-                                <div
-                                    className="w-full md:w-1/3 aspect-[3/4] relative overflow-hidden bg-neutral-900 shadow-2xl skew-x-[-2deg] hover:skew-x-0 transition-transform duration-700 cursor-pointer group"
-                                    onClick={() => router.push(`/members/${member.id}`)}
-                                >
-                                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10" />
-                                    <img
-                                        src={member.image}
-                                        alt={member.name}
-                                        className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000 grayscale group-hover:grayscale-0"
-                                    />
-
-                                    {/* Persona Badge */}
-                                    <div className="absolute bottom-6 left-6 z-20 overflow-hidden">
-                                        <p className="text-white font-black text-4xl translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                                            {member.persona}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </motion.div>
-
-                {/* Global Section Title (Stays pinned?) No, it scrolls with them or stays fixed? */}
-                {/* Leclerc has subtle fixed elements. Let's keep it clean for now. */}
-            </motion.div>
+                        {/* Large Image Back */}
+                        <div
+                            className="w-[30vw] aspect-[3/4] overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 cursor-pointer"
+                            onClick={() => router.push(`/members/${member.id}`)}
+                        >
+                            <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                        </div>
+                    </div>
+                ))}
+            </div>
         </section>
     );
 }

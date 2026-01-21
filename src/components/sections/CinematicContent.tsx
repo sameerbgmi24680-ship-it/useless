@@ -1,91 +1,62 @@
-import { motion, useTransform } from "framer-motion";
-import { Gallery } from "@/components/sections/Gallery";
-import { Projects } from "@/components/sections/Projects";
-import { Lifestyle } from "@/components/sections/Lifestyle";
-import { Contact } from "@/components/sections/Contact";
+"use client";
+
+import { useRef } from "react";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion"; // Keep using Framer for simple reveals
+import { GlitchText } from "@/components/ui/GlitchText";
 
 interface CinematicContentProps {
-    scrollProgress: any;
+    scrollProgress: any; // Unused in new flow
 }
 
 export function CinematicContent({ scrollProgress }: CinematicContentProps) {
-    // 70% to 90% : Content
-    // 90% to 100% : Finale
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start end", "end end"]
+    });
 
-    // SCENE 1: MOMENTS / GALLERY (70% - 77%)
-    const galleryOpacity = useTransform(scrollProgress, [0.70, 0.71, 0.76, 0.77], [0, 1, 1, 0]);
-    const galleryX = useTransform(scrollProgress, [0.70, 0.72, 0.78], ["100%", "0%", "-100%"]);
-    const galleryScale = useTransform(scrollProgress, [0.70, 0.74], [0.8, 1]);
-
-    // SCENE 2: PROJECTS (77% - 84%)
-    const projectOpacity = useTransform(scrollProgress, [0.77, 0.78, 0.83, 0.84], [0, 1, 1, 0]);
-    const projectY = useTransform(scrollProgress, [0.77, 0.79, 0.85], ["100%", "0%", "-100%"]);
-
-    // SCENE 3: LIFESTYLE & CONTACT (84% - 90%)
-    const lifestyleOpacity = useTransform(scrollProgress, [0.84, 0.86, 0.89, 0.91], [0, 1, 1, 0]);
-
-    // FINALE: USELESS (90% - 100%)
-    // "The Crown" - Heavy, slow settle.
-    const finalOpacity = useTransform(scrollProgress, [0.90, 0.92, 0.98], [0, 1, 1]);
-    const finalScale = useTransform(scrollProgress, [0.90, 1.0], [1.1, 1]); // Subtle settle
-    const finalY = useTransform(scrollProgress, [0.90, 1.0], [50, 0]); // Rise into place
-    const finalRotateX = useTransform(scrollProgress, [0.90, 1.0], [20, 0]); // Tilt up
+    const y = useTransform(scrollYProgress, [0, 1], ["-20%", "0%"]);
+    const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
 
     return (
-        <section className="relative w-full h-full pointer-events-none">
-            {/* Gallery Layer */}
-            <motion.div
-                style={{ opacity: galleryOpacity, x: galleryX, scale: galleryScale }}
-                className="absolute inset-0 z-20 overflow-hidden flex items-center justify-center bg-black/80 backdrop-blur-sm"
-            >
-                <div className="scale-75 pointer-events-auto">
-                    <Gallery />
-                </div>
-            </motion.div>
+        <section
+            ref={containerRef}
+            className="relative min-h-screen w-full bg-[var(--void-black)] flex flex-col items-center justify-center py-40 z-50 overflow-hidden"
+        >
+            {/* Background Grid/Cyberpunk Noise */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(20,20,20,0.8)_1px,transparent_1px),linear-gradient(90deg,rgba(20,20,20,0.8)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
 
-            {/* Projects Layer */}
             <motion.div
-                style={{ opacity: projectOpacity, y: projectY }}
-                className="absolute inset-0 z-30 overflow-hidden flex items-center justify-center bg-black/90 backdrop-blur-sm"
+                style={{ y, opacity }}
+                className="relative z-10 flex flex-col items-center justify-center space-y-12"
             >
-                <div className="scale-75 pointer-events-auto">
-                    <Projects />
-                </div>
-            </motion.div>
-
-            {/* Lifestyle/Contact Layer */}
-            <motion.div
-                style={{ opacity: lifestyleOpacity }}
-                className="absolute inset-0 z-40 overflow-hidden flex items-center justify-center bg-black"
-            >
-                <div className="w-full max-w-4xl pointer-events-auto">
-                    <Lifestyle />
-                    <Contact />
-                </div>
-            </motion.div>
-
-            {/* GRAND FINALE */}
-            <motion.div
-                style={{ opacity: finalOpacity, scale: finalScale, y: finalY, rotateX: finalRotateX }}
-                className="absolute inset-0 z-50 flex flex-col items-center justify-center pointer-events-none"
-            >
-                <h1 className="text-[12vw] font-black tracking-tighter text-transparent bg-clip-text drop-shadow-2xl"
-                    style={{
-                        backgroundImage: "linear-gradient(to bottom, #FFD700, #B8860B)", // Royal Gold Gradient
-                        WebkitTextStroke: "1px rgba(255, 215, 0, 0.3)"
-                    }}
-                >
-                    USELESS
+                {/* CYBERPUNK FINALE */}
+                <h1 className="text-[15vw] font-black leading-none tracking-tighter text-transparent bg-clip-text select-none text-center outline-text-neon relative group cursor-default">
+                    <span className="absolute inset-0 text-[var(--lando-neon)] opacity-30 blur-2xl animate-pulse">USELESS</span>
+                    <GlitchText text="USELESS" className="text-white drop-shadow-[0_0_15px_rgba(210,255,0,0.5)]" />
                 </h1>
 
-                {/* Copyright Footer */}
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    style={{ opacity: finalOpacity }}
-                    className="absolute bottom-8 text-[10px] md:text-xs text-[#B8860B] uppercase tracking-[0.3em] font-mono"
-                >
-                    © USELESS Collective — Engineered in Motion
-                </motion.p>
+                {/* Call to Action Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl px-8">
+                    <div className="border border-[var(--lando-neon)] p-8 bg-[var(--void-black)] hover:bg-[var(--lando-neon)] hover:text-black transition-all duration-300 group cursor-pointer relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
+                        <h3 className="text-2xl font-bold font-mono mb-2">JOIN THE COLLECTIVE</h3>
+                        <p className="font-mono text-sm opacity-70 group-hover:opacity-100"> initiate_protocol(v2.0) </p>
+                    </div>
+
+                    <div className="border border-[var(--quadrant-orange)] p-8 bg-[var(--void-black)] hover:bg-[var(--quadrant-orange)] hover:text-black transition-all duration-300 group cursor-pointer">
+                        <h3 className="text-2xl font-bold font-mono mb-2">LIFESTYLE APPAREL</h3>
+                        <p className="font-mono text-sm opacity-70 group-hover:opacity-100"> equipping_future_agents </p>
+                    </div>
+                </div>
+
+                {/* Footer */}
+                <div className="mt-40 text-center relative">
+                    <div className="h-px w-screen bg-gradient-to-r from-transparent via-[var(--lando-neon)] to-transparent opacity-50 mb-8" />
+                    <p className="text-[10px] md:text-xs text-[var(--lando-neon)] uppercase tracking-[0.3em] font-mono opacity-60">
+                        © USELESS Collective — Engineered in Motion
+                    </p>
+                </div>
             </motion.div>
         </section>
     );
