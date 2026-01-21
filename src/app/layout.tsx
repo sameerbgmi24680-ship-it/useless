@@ -28,16 +28,9 @@ export default function RootLayout({
           "min-h-screen bg-background text-foreground antialiased"
         )}
       >
-        <MembersProvider>
-          <SmoothScroll>
-            <GatekeeperLoader onComplete={() => { }} />
-            <MemberOverlay />
-            <ScrollProgress />
-            <NoiseOverlay />
-            <MagneticCursor />
-            {children}
-          </SmoothScroll>
-        </MembersProvider>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
