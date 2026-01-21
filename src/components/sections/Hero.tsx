@@ -5,18 +5,24 @@ import { MouseEvent } from "react";
 import { cn } from "@/lib/utils";
 
 interface HeroProps {
-    scrollProgress: any; // Using 'any' briefly to avoid complexity with MotionValue types, but ideally MotionValue<number>
+    scrollProgress: any;
 }
 
 export function Hero({ scrollProgress }: HeroProps) {
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
 
-    // Cinematic Scroll Transforms (0 - 0.15 range of total page scroll)
-    const opacity = useTransform(scrollProgress, [0, 0.1, 0.2], [1, 1, 0]);
-    const scale = useTransform(scrollProgress, [0, 0.2], [1, 0.8]);
-    const y = useTransform(scrollProgress, [0, 0.2], ["0%", "-50%"]); // Moves UP as you scroll DOWN (Illusion)
-    const blur = useTransform(scrollProgress, [0, 0.15], ["0px", "10px"]);
+    // Cinematic Morph: 0-10%
+    // Gradient Text fades OUT
+    // Photo Text fades IN
+    // Whole Container moves UP and Scales DOWN (Inverse motion)
+
+    const gradientOpacity = useTransform(scrollProgress, [0, 0.05], [1, 0]);
+    const photoOpacity = useTransform(scrollProgress, [0, 0.05], [0, 1]); // Quick morph
+
+    const contentScale = useTransform(scrollProgress, [0, 0.1], [1, 0.8]);
+    const contentY = useTransform(scrollProgress, [0, 0.1], ["0%", "-20%"]);
+    const contentBlur = useTransform(scrollProgress, [0, 0.08, 0.15], ["0px", "0px", "10px"]);
 
     function handleMouseMove({ currentTarget, clientX, clientY }: MouseEvent) {
         const { left, top } = currentTarget.getBoundingClientRect();
@@ -28,9 +34,13 @@ export function Hero({ scrollProgress }: HeroProps) {
         <motion.div
             className="group relative flex h-full w-full items-center justify-center bg-black overflow-hidden perspective-1000"
             onMouseMove={handleMouseMove}
-            style={{ opacity, scale, y, filter: useMotionTemplate`blur(${blur})` }}
+            style={{
+                scale: contentScale,
+                y: contentY,
+                filter: useMotionTemplate`blur(${contentBlur})`
+            }}
         >
-            {/* Background - Subtle Grid & Ambient Pulse */}
+            {/* ... Background ... */}
             <motion.div
                 className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"
                 animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.05, 1] }}
@@ -53,21 +63,22 @@ export function Hero({ scrollProgress }: HeroProps) {
 
                 {/* Container for Morphing Text */}
                 <div className="relative z-20">
-                    {/* Layer 1: Gradient Text (Fades OUT on scroll) */}
+                    {/* Layer 1: Gradient Text (Fades OUT) */}
                     <motion.h1
                         className="text-[15vw] font-black leading-none tracking-tighter bg-gradient-to-br from-[var(--royal-gold)] via-[var(--neon-purple)] to-cyan-500 bg-clip-text text-transparent select-none absolute inset-0"
+                        style={{ opacity: gradientOpacity }}
                     >
                         USELESS
                     </motion.h1>
 
-                    {/* Layer 2: Photo Text (Always visible here, fading handled by parent scroll prop if needed, or kept as static texture) */}
+                    {/* Layer 2: Photo Text (Fades IN) */}
                     <motion.h1
                         className="relative text-[15vw] font-black leading-none tracking-tighter text-transparent bg-clip-text select-none"
                         style={{
-                            backgroundImage: "url('/images/usless-group.jpg')", // Ensure this path is correct
+                            backgroundImage: "url('/images/usless-group.jpg')",
                             backgroundSize: "cover",
                             WebkitBackgroundClip: "text",
-                            opacity: 0.5, // Blend it slightly
+                            opacity: photoOpacity,
                         }}
                     >
                         USELESS

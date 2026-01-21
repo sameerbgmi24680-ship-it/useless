@@ -3,12 +3,9 @@
 import { useRef } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { Hero } from "@/components/sections/Hero";
+import { IdentitySequence } from "@/components/sections/IdentitySequence";
 import { Members } from "@/components/sections/Members";
-import { About } from "@/components/sections/About";
-import { Projects } from "@/components/sections/Projects";
-import { Gallery } from "@/components/sections/Gallery";
-import { Lifestyle } from "@/components/sections/Lifestyle";
-import { Contact } from "@/components/sections/Contact";
+import { CinematicContent } from "@/components/sections/CinematicContent";
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -21,34 +18,31 @@ export default function Home() {
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 20, restDelta: 0.001 });
 
   return (
-    <main ref={containerRef} className="relative bg-black min-h-[2000vh]"> {/* Massive height for scrubbing */}
+    <main ref={containerRef} className="relative bg-black min-h-[3500vh]"> {/* Extended Timeline */}
 
-      {/* SCENE 1: HERO (0% - 10%) */}
-      {/* Pins the Hero and handles its exit animation */}
-      <div className="sticky top-0 h-screen overflow-hidden">
-        <Hero scrollProgress={smoothProgress} />
-      </div>
+      {/* Master Sticky Container */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
 
-      {/* SCENE 2: MEMBERS & FINALE (10% - 100%) */}
-      {/* Overlaps/Pins for member sequence. 
-                Pointer events 'none' by default so scroll passes through, 
-                but children can re-enable events if needed (like the detail modal). 
-            */}
-      <div className="sticky top-0 h-screen overflow-hidden z-10 pointer-events-none">
-        <Members scrollProgress={smoothProgress} />
-      </div>
+        {/* Layer 1: Hero (0-10%) */}
+        <div className="absolute inset-0 z-0">
+          <Hero scrollProgress={smoothProgress} />
+        </div>
 
-      {/* SCENE 3: REST OF CONTENT (Normal Flow or Pinned) */}
-      {/* Pushed to the END of the timeline so it doesn't cover the cinematic scroll early. */}
-      <div className="relative z-20 bg-neutral-900 mt-[2000vh]">
-        {/* The 'mt' here helps separate, but really we want these to be part of the flow. 
-                    If we want them to scroll normally, we can just put them here. 
-                */}
-        <About />
-        <Gallery />
-        <Projects />
-        <Lifestyle />
-        <Contact />
+        {/* Layer 2: Identity Sequence (10-35%) */}
+        <div className="absolute inset-0 z-10 pointer-events-none">
+          <IdentitySequence scrollProgress={smoothProgress} />
+        </div>
+
+        {/* Layer 3: The Squad (35-70%) */}
+        <div className="absolute inset-0 z-20 pointer-events-none">
+          <Members scrollProgress={smoothProgress} />
+        </div>
+
+        {/* Layer 4: Content & Finale (70-100%) */}
+        <div className="absolute inset-0 z-30 pointer-events-none">
+          <CinematicContent scrollProgress={smoothProgress} />
+        </div>
+
       </div>
     </main>
   );

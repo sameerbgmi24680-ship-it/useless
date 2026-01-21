@@ -30,10 +30,10 @@ export function Members({ scrollProgress }: MembersProps) {
     const [selectedMember, setSelectedMember] = useState<typeof members[0] | null>(null);
 
     // Scroll Timeline Configuration
-    const START_SCROLL = 0.10; // Members start appearing
-    const SQUAD_END_SCROLL = 0.85; // Last member finishes
-    const FINAL_PAN_START = 0.88; // "USELESS" text starts (slight pause after squad)
-    const FINAL_PAN_END = 0.99; // "USELESS" text settles just before content arrives
+    // Scroll Timeline Configuration
+    // Moved to occur AFTER Identity Sequence (10-35%)
+    const START_SCROLL = 0.35; // Members start appearing
+    const SQUAD_END_SCROLL = 0.70; // Last member finishes
 
     const TOTAL_SQUAD_DURATION = SQUAD_END_SCROLL - START_SCROLL;
     const STEP = TOTAL_SQUAD_DURATION / members.length;
@@ -101,22 +101,7 @@ export function Members({ scrollProgress }: MembersProps) {
                     );
                 })}
 
-                {/* FINAL PAN: "USELESS" TEXT REVEAL */}
-                <motion.div
-                    style={{
-                        opacity: useTransform(scrollProgress, [FINAL_PAN_START, FINAL_PAN_START + 0.05], [0, 1]),
-                        scale: useTransform(scrollProgress, [FINAL_PAN_START, FINAL_PAN_END], [2, 1]),
-                        x: useTransform(scrollProgress, [FINAL_PAN_START, FINAL_PAN_END], [400, 0]), // Starts right, moves center
-                        y: useTransform(scrollProgress, [FINAL_PAN_START, FINAL_PAN_END], [200, 0]), // Starts bottom, moves center
-                        rotateY: useTransform(scrollProgress, [FINAL_PAN_START, FINAL_PAN_END], [45, 0]),
-                        zIndex: 100
-                    }}
-                    className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                >
-                    <h1 className="text-[12vw] font-black tracking-tighter text-white drop-shadow-[0_0_50px_rgba(255,255,255,0.5)]">
-                        USELESS
-                    </h1>
-                </motion.div>
+                {/* Final Pan moved to separate component at end of scroll */}
             </div>
 
             {/* Reuse Detail Overlay (Unchanged logic, just ensure Z-index is high) */}
