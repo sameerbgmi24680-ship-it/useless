@@ -32,8 +32,8 @@ export function Members({ scrollProgress }: MembersProps) {
     // Scroll Timeline Configuration
     const START_SCROLL = 0.10; // Members start appearing
     const SQUAD_END_SCROLL = 0.85; // Last member finishes
-    const FINAL_PAN_START = 0.85; // "USELESS" text starts
-    const FINAL_PAN_END = 0.98; // "USELESS" text settles
+    const FINAL_PAN_START = 0.88; // "USELESS" text starts (slight pause after squad)
+    const FINAL_PAN_END = 0.99; // "USELESS" text settles just before content arrives
 
     const TOTAL_SQUAD_DURATION = SQUAD_END_SCROLL - START_SCROLL;
     const STEP = TOTAL_SQUAD_DURATION / members.length;

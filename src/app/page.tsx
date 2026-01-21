@@ -21,7 +21,7 @@ export default function Home() {
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 20, restDelta: 0.001 });
 
   return (
-    <main ref={containerRef} className="relative bg-black min-h-[1500vh]"> {/* Massive height for scrubbing */}
+    <main ref={containerRef} className="relative bg-black min-h-[2000vh]"> {/* Massive height for scrubbing */}
 
       {/* SCENE 1: HERO (0% - 10%) */}
       {/* Pins the Hero and handles its exit animation */}
@@ -39,13 +39,8 @@ export default function Home() {
       </div>
 
       {/* SCENE 3: REST OF CONTENT (Normal Flow or Pinned) */}
-      {/* For now, we will let these flow after the scroll scrubbing or be pinned as well.
-                Given the requirement for "no standard vertical flow", these should probably be revealed sequentially too.
-                But let's stick to the critical Hero -> Members flow first.
-                To make them appear *after* the huge scroll space, we place them at the bottom of the container?
-                Actually, if we put them in a relative div at the end, they will appear after 800vh.
-            */}
-      <div className="relative z-20 bg-neutral-900 mt-[100vh]">
+      {/* Pushed to the END of the timeline so it doesn't cover the cinematic scroll early. */}
+      <div className="relative z-20 bg-neutral-900 mt-[2000vh]">
         {/* The 'mt' here helps separate, but really we want these to be part of the flow. 
                     If we want them to scroll normally, we can just put them here. 
                 */}
