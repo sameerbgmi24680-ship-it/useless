@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Providers } from "./providers";
@@ -7,6 +7,13 @@ import { Providers } from "./providers";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-space-mono",
   display: "swap",
 });
 
@@ -25,6 +32,7 @@ export default function RootLayout({
       <body
         className={cn(
           inter.variable,
+          spaceMono.variable,
           "min-h-screen bg-background text-foreground antialiased"
         )}
       >
